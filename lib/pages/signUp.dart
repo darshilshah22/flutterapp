@@ -2,26 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_app1/utils/routes.dart';
 
-class LoginPage extends StatefulWidget {
+class SignUpPage extends StatefulWidget {
   late final String title;
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-
-  final _formKey = GlobalKey<FormState>();
-  late String _email,_password= "";
-
-  moveToHome(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      toastMessage("Email: $_email\nPassword: $_password");
-      await Future.delayed(Duration(seconds: 1));
-      await Navigator.pushNamed(context, MyRoutes.homeRoute);
-    }
-  }
+class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  var _formKey = GlobalKey<FormState>();
+  var isLoading = false;
+  late String _fullName,_email,_password= "";
 
   Widget _backButton() {
     return InkWell(
@@ -54,6 +48,15 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  moveToHome(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      toastMessage("Username: $_fullName\nEmail: $_email\nPassword: $_password");
+      await Future.delayed(Duration(seconds: 1));
+      await Navigator.pushNamed(context, MyRoutes.homeRoute);
+    }
+  }
+
   Widget _submitButton() {
     return InkWell(
       onTap: () => moveToHome(context),
@@ -65,67 +68,34 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.all(Radius.circular(10)),
             color: Colors.black),
         child: Text(
-          'Login',
+          'Register Now',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
     );
   }
 
-  Widget _divider() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          Text('or'),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _createAccountLabel() {
+  Widget _loginAccountLabel() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
       padding: EdgeInsets.all(15),
       alignment: Alignment.bottomCenter,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, MyRoutes.signupRoute);
+          Navigator.pushNamed(context, MyRoutes.loginRoute);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Don\'t have an account ?',
+              'Already have an account?',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(
               width: 2,
             ),
             Text(
-              'Sign up',
+              'Login',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -155,6 +125,30 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         TextFormField(
           decoration: InputDecoration(
+            labelText: "Full Name",
+              hintText: "Enter Full Name",
+              hintStyle: TextStyle(color: Colors.grey),
+              focusColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.black))),
+          textInputAction: TextInputAction.next,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Enter a Full name!';
+            }
+            return null;
+          },
+          onSaved: (value){
+            _fullName = value!;
+          },
+        ),
+        SizedBox(height: 16),
+        TextFormField(
+          decoration: InputDecoration(
               labelText: "Email",
               hintText: "Enter Email Id",
               hintStyle: TextStyle(color: Colors.grey),
@@ -166,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: Colors.black))),
           keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
           validator: (value) {
             if (value!.isEmpty ||
                 !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -192,6 +187,7 @@ class _LoginPageState extends State<LoginPage> {
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: Colors.black))),
+          textInputAction: TextInputAction.next,
           validator: (value) {
             if (value!.isEmpty && value.length <= 6) {
               return 'Enter a valid Password!';
@@ -210,42 +206,39 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-        body: Form(
-          key: _formKey,
-          child: Container(
-      height: height,
-      child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    SizedBox(height: 50),
-                    _emailPasswordWidget(),
-                    SizedBox(height: 20),
-                    _submitButton(),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: Text('Forgot Password ?',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
-                    ),
-                    _divider(),
-                    _createAccountLabel(),
-                  ],
+      body: Form(
+        key: _formKey,
+        child: Container(
+          height: height,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: height * .2),
+                      _title(),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      _emailPasswordWidget(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _submitButton(),
+                      _loginAccountLabel(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(top: 40, left: 0, child: _backButton()),
-          ],
+              Positioned(top: 40, left: 0, child: _backButton()),
+            ],
+          ),
+        ),
       ),
-    ),
-        ));
+    );
   }
 }

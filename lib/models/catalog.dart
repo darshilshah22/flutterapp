@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class CatalogModel {
-  static List<Item> items;
+  static List<Item>? items;
 }
 
 class Item {
@@ -30,12 +30,12 @@ class Item {
     required String image,
   }) {
     return Item(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      desc: desc ?? this.desc,
-      price: price ?? this.price,
-      color: color ?? this.color,
-      image: image ?? this.image,
+      id: this.id,
+      name: this.name,
+      desc: this.desc,
+      price: this.price,
+      color: this.color,
+      image: this.image,
     );
   }
 
@@ -51,7 +51,6 @@ class Item {
   }
 
   factory Item.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
 
     return Item(
       id: map['id'],
