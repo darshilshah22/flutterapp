@@ -1,31 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:my_app1/pages/homepage.dart';
-import 'package:my_app1/pages/loginpage.dart';
-import 'package:my_app1/pages/signUp.dart';
-import 'package:my_app1/pages/splashPage.dart';
-import 'package:my_app1/utils/routes.dart';
-import 'package:my_app1/widgets/theme.dart';
+import 'package:my_app1/pages/home/home_screen.dart';
+
+import 'core/constants/constants.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light,
-      theme: MyTheme.lightTheme(context),
-      darkTheme: MyTheme.darkTheme(context),
-      initialRoute: MyRoutes.homeRoute,
-      routes: {
-        "/": (context) => SplashPage(),
-        MyRoutes.splashRoute: (context) => SplashPage(),
-        MyRoutes.homeRoute: (context) => HomePage(),
-        MyRoutes.loginRoute: (context) => LoginPage(),
-        MyRoutes.signupRoute: (context) => SignUpPage()
-      },
+      title: 'Money App',
+      theme: ThemeData(
+        textTheme: Theme.of(context).textTheme.apply(bodyColor: kTextColor),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: HomeScreen(),
     );
   }
 }
